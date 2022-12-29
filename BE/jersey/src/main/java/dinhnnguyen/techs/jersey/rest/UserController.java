@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -81,6 +81,7 @@ public class UserController {
 
 	@PUT
 	@Path("/update")
+	
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(FUser user) {
 		userService.update(user);

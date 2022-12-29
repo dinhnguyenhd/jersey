@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.ws.rs.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 
@@ -24,9 +25,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserMapper userMapper;
 
-	private List<FUser> users = new ArrayList<FUser>();
-
-	@Cacheable(value = "customerInfo")
+	@Cacheable(value = "list")
 	public List<User> list() {
 		return userRepository.findAll();
 	}
@@ -36,12 +35,14 @@ public class UserServiceImpl implements UserService {
 		return us.get() != null ? us.get() : null;
 	}
 
+	@CacheEvict(value = "list", allEntries = true)
 	public User create(FUser form) {
 		User newUser = this.userMapper.toEntity(form);
 		return userRepository.save(newUser);
 
 	}
 
+	@CacheEvict(value = "list", allEntries = true)
 	public void update(FUser form) {
 		Optional<User> us = userRepository.findById(form.getId());
 		if (us.get() != null) {
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@CacheEvict(value = "list", allEntries = true)
 	public void delete(long id) throws NotFoundException {
 		Optional<User> us = userRepository.findById(id);
 		if (us.get() == null)
